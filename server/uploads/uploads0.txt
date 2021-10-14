@@ -1,0 +1,152 @@
+<nav class="customer-profile-header-menu-ui deeper-lvl-ui">
+	<ul>
+		<li>
+			<button class="load-erp-data-lq load-first-lvl-lq parent-container-reload-lq" data-template="customer-profile/invoices/invoices.html" data-url="{{page.Url}}?tab=invoices">
+				<i class="ti-angle-left"></i> <span class="no-on-mobile-ui">{{ translations.Back }}</span>
+			</button>
+		</li>
+		<li class="active-ui only-text-ui two-lanes-ui">{{ translations.DocumentDetails }} <strong class="erp-number-lq hidden-lq"></strong></li>
+	</ul>
+</nav>
+<div class="erp-data-container-lq" style="display: none">
+	<div class="info-container-lq info-container-ui container-ui clear-after-ui">
+		<div class="expandable-mechanism-container-lq">
+			<div class="order-info-ui">
+				<div class="order-info-row-ui">
+					<div class="order-info-item-ui">
+						<div class="name-ui">{{ translations.BuyDate }}</div>
+						<div class="content-ui">{ Date | date }</div>
+					</div>
+					<div class="order-info-item-ui">
+						<div class="name-ui">{{ translations.PaymentDueDate }}</div>
+						<div class="content-ui">
+							<div class="due-date-ui" rv-class-error-ui="DaysAfterExists">{ DueDate | date }</div>
+							<div class="error-bg-ui days-after-ui" rv-if="DaysAfterExists">
+								{ DaysAfterDueDate } {{ translations.DaysAfterDeadline | Downcase }}
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="expandable-lq">
+					<div class="order-info-row-ui">
+						<div class="order-info-item-ui">
+							<div class="name-ui">{{ translations.PaymentMethod }}</div>
+							<div class="content-ui">{ PaymentMethod }</div>
+						</div>
+						<div class="order-info-item-ui">
+							<div class="name-ui">{{ translations.SaleDate }}</div>
+							<div class="content-ui">{ ExpectedDate | date }</div>
+						</div>
+					</div>
+					<div class="order-info-row-ui">
+						<div class="order-info-item-ui" rv-if="EmailExists">
+							<div class="name-ui">{{ translations.BoughtBy }}</div>
+							<div class="content-ui">
+								<div>{ Email }</div>
+							</div>
+						</div>
+						<div class="order-info-item-ui" rv-if="StreetExists">
+							<div class="name-ui">{{ translations.ReciverData }}</div>
+							<div class="content-ui">
+								<div>{ Name1 }</div>
+								<div>{ Name2 }</div>
+								<div>{ Street } { StreetNo }<span rv-if="UnitNoExists">/{ UnitNo }</span></div>
+								<div>{ ZipCode } { City }</div>
+							</div>
+						</div>
+						<div class="order-info-item-ui" rv-if="InvoiceStreetExists">
+							<div class="name-ui">{{ translations.BuyerData }}</div>
+							<div class="content-ui">
+								<div>{ InvoiceName1 }</div>
+								<div>{ InvoiceName2 }</div>
+								<div>{ InvoiceTIN }</div>
+								<div>{ InvoiceStreet } { InvoiceStreetNo }<span rv-if="InvoiceUnitNoExists">/{ InvoiceUnitNo }</span></div>
+								<div>{ InvoiceZipCode } { InvoiceCity }</div>
+							</div>
+						</div>
+					</div>
+					<div class="remarks-ui header-attributes-lq" rv-if="AttributesExist"></div>
+					<div class="remarks-ui related-documents-lq {% if settings.erpOrdersAvailability == 'yes' -%} erpOrdersAvailable-lq {% endif -%} {% if settings.SORAvailability == 'yes' -%} SORAvailable-lq {% endif -%}" rv-if="DocumentsExist" data-url-origin="{{ page.Url }}?&deeper-lvl=true&erp-data=true&" data-url-eshop-orders="{{ page.Url }}?{{ customer-profile.OrderQueryGET | H }}=">
+						<div>{{ translations.RelatedDocuments }}</div>
+						<div class="related-document-labels-ui">
+							<div class="column-ui document-number-column-ui">{{ translations.Number | Capitalize }}</div>
+							<div class="column-ui document-date-column-ui">{{ translations.DocumentDate }}</div>
+							<div class="column-ui document-netto-column-ui">{{ translations.Value }} {{ translations.Netto | Downcase }}</div>
+							<div class="column-ui document-brutto-column-ui">{{ translations.Value }} {{ translations.Brutto | Downcase }}</div>
+							<div class="column-ui document-currency-column-ui">{{ translations.Currency }}</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="summary-info-ui">
+				<div class="order-summary-title-ui">
+		      		<div class="clear-after-ui" rv-if="Pay">
+						<div class="f-left-ui half-ui">
+		          			{{ translations.Paid }} {{ translations.Brutto | Downcase }}
+		        		</div>
+		        		<div class="f-right-ui half-ui overall-price-ui" rv-if="ToPayExists">
+		          			{ Paid | price } { Currency }
+		        		</div>
+		        		<div class="f-right-ui half-ui overall-price-ui" rv-unless="ToPayExists">
+		          			{ TotalValue | price } { Currency }
+		        		</div>
+					</div>
+		      		<div class="clear-after-ui fw-normal-ui" rv-if="ToPayExists">
+						<div class="f-left-ui half-ui">
+		          			{{ translations.ToPay }} {{ translations.Brutto | Downcase }}
+		        		</div>
+		        		<div class="f-right-ui half-ui overall-price-ui">
+		          			{ ToPay | price } { Currency }
+		        		</div>
+		      		</div>
+		      		<div class="clear-after-ui" rv-if="Return">
+						<div class="f-left-ui half-ui">
+		          			{{ translations.Returned }} {{ translations.Brutto | Downcase }}
+		        		</div>
+		        		<div class="f-right-ui half-ui overall-price-ui" rv-if="ToReturnExists">
+		          			{ Returned | price } { Currency }
+		        		</div>
+		        		<div class="f-right-ui half-ui overall-price-ui" rv-unless="ToReturnExists">
+		          			{ TotalValue | abs | price } { Currency }
+		        		</div>
+		      		</div>
+		      		<div class="clear-after-ui fw-normal-ui" rv-if="ToReturnExists">
+						<div class="f-left-ui half-ui">
+		          			{{ translations.ToReturn }} {{ translations.Brutto | Downcase }}
+						</div>
+		        		<div class="f-right-ui half-ui overall-price-ui">
+		          			{ ToReturn | price } { Currency }
+		        		</div>
+		      		</div>
+				</div>
+				<div class="expandable-lq summary-expandable-lq">
+					<div class="box-ui order-summary-ui">
+				    	<div class="details-wrapper-ui">
+				      		<div class="clear-after-ui">
+			          			<div class="f-left-ui half-ui">{{ translations.Value }} {{ translations.Netto | Downcase }}</div>
+			          			<div class="f-right-ui half-ui netto-price-ui">{ SubtotalValue | price } { Currency }</div>
+			      			</div>
+				      		<div class="clear-after-ui">
+				        		<div class="f-left-ui half-ui">{{ translations.Value }} {{ translations.Brutto | Downcase }}</div>
+				        		<div class="f-right-ui half-ui">{ TotalValue | price } { Currency }</div>
+				      		</div>
+				    	</div>
+					</div>
+					<button class="btn-pure-ui f-right-ui mt10-ui invoice-pdf-lq" rv-if="InvoicePDFExists">
+						<i class="ti-wallet"></i> {{ translations.Invoice }}
+					</button>
+				</div>
+				<button class="btn-pure-ui expand-data-lq change-button-lq">
+					<i class="ti-angle-down"></i> {{ translations.ShowDetails }}
+				</button>
+				<button class="btn-pure-ui expand-data-lq change-button-lq hidden-lq">
+					<i class="ti-angle-up"></i> {{ translations.HideDetails }}
+				</button>
+			</div>
+		</div>
+	</div>
+	<div class="products-list-ui cart-ui profile-order-ui order-ui invoice-products-list-lq container-lq">
+		{% include 'customer-profile/products-list.html' -%}
+	</div>
+</div>
+<div class="loader-lq loader-ui big-ui"></div>

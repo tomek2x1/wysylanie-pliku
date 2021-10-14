@@ -6,7 +6,7 @@ const fs = require('fs');
 const cors = require('cors');
 const app = express();
 const port = 3001;
-
+const path = require('path');
 
 
 app.use(fileUpload({
@@ -20,9 +20,25 @@ app.use(bodyParser.json());
 
 
 app.post('/', (req, res) => {
-  // console.log(req.files)
-  let formData = req.files;
-  console.log('form data', formData);
+  const filesName = [];
+  let filesNumber = 0;
+
+  if(req.files){
+    const files = req.files.files;
+
+    files.forEach((file, index) => {
+      filesName.push(file.name);
+      filesNumber++;
+      const extensionName = file.name.substr(file.name.indexOf("."))
+      file.mv('./uploads/uploads' + index + extensionName, function (err) {
+        if(err){
+          console.log(err);
+        } else {
+          console.log("File Upload");
+        }
+      })
+    })
+  }
 
   const apiKey = "Tq7v3NPApQaR5xlpo4f"
   var API_KEY = "YOUR_API_KEY";
@@ -43,23 +59,31 @@ app.post('/', (req, res) => {
   
   var headers = {
     'Authorization': auth,
+    'Content-Type': 'multipart/form-data',
   }
-  
-  // unirest.post(URL)
-  //   .headers(headers)
-  //   .field(fields)
-  //   // .attach('attachments[]', fs.createReadStream('/path/to/file1.ext'))
-  //   // .attach('attachments[]', fs.createReadStream('/path/to/file2.ext'))
-  //   .end(function(response){
-  //     console.log(response.body)
-  //     console.log("Response Status : " + response.status)
-  //     if(response.status == 201){
-  //       console.log("Location Header : "+ response.headers['location'])
-  //     }
-  //     else{
-  //       console.log("X-Request-Id :" + response.headers['x-request-id']);
-  //     }
-  //   });
+
+  const attachments = [];
+
+  attachments.push(fs.createReadStream(__dirname + `/uploads/uploads0.txt`));
+  attachments.push(fs.createReadStream(__dirname + `/uploads/uploads1.png`));
+
+
+
+  unirest.post(URL)
+    .headers(headers)
+    .field(fields)
+    .attach('attachments[]', fs.createReadStream(__dirname + `/uploads/uploads0.txt`))
+    .attach('attachments[]', fs.createReadStream(__dirname + `/uploads/uploads0.txt`))
+    .end(function(response){
+      console.log("response.body", response.body)
+      console.log("Response Status : " + response.status)
+      if(response.status == 201){
+        console.log("Location Header : "+ response.headers['location'])
+      }
+      else{
+        console.log("X-Request-Id :" + response.headers['x-request-id']);
+      }
+    });
 
 
 
